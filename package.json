@@ -1,0 +1,22 @@
+{
+  "name": "patreon",
+  "version": "0.0.1",
+  "description": "Use the Patreon API via OAuth.",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patreon/patreon-js.git"
+  },
+  "keywords": [
+    "patreon"
+  ],
+  "author": "Derek Reynolds <derek@patreon.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/patreon/patreon-js/issues"
+  },
+  "homepage": "https://github.com/patreon/patreon-js#readme"
+}
