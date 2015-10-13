@@ -2,7 +2,7 @@
   "name": "patreon",
   "version": "0.0.2-0",
   "description": "Use the Patreon API via OAuth.",
-  "main": "index.js",
+  "main": "dist/patreon.js",
   "scripts": {
     "build": "node_modules/.bin/babel src -d dist",
     "prepublish": "npm run ci && npm run build",
