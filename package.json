@@ -4,7 +4,11 @@
   "description": "Use the Patreon API via OAuth.",
   "main": "index.js",
   "scripts": {
-    "test": "tape test/**/*.js"
+    "build": "node_modules/.bin/babel src -d dist",
+    "prepublish": "npm run ci && npm run build",
+    "lint": "eslint src/",
+    "test": "babel-tape-runner tests/**/*.js",
+    "ci": "npm run lint && npm run test"
   },
   "repository": {
     "type": "git",
@@ -18,5 +22,18 @@
   "bugs": {
     "url": "https://github.com/patreon/patreon-js/issues"
   },
-  "homepage": "https://github.com/patreon/patreon-js#readme"
+  "homepage": "https://github.com/patreon/patreon-js#readme",
+  "dependencies": {
+    "request": "2.65.0"
+  },
+  "devDependencies": {
+    "babel": "5.8.23",
+    "babel-eslint": "4.1.3",
+    "babel-tape-runner": "1.2.0",
+    "eslint": "1.6.0",
+    "eslint-config-patreon": "2.0.0",
+    "eslint-plugin-react": "3.5.1",
+    "nock": "2.15.0",
+    "tape": "4.2.1"
+  }
 }
