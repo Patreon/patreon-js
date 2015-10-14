@@ -2,10 +2,12 @@
 
 [![Build State](https://img.shields.io/travis/Patreon/patreon-js.svg?style=flat)](https://travis-ci.org/Patreon/patreon-js)
 
+Use the Patreon API via OAuth.
+
 ## Installation
 
 ```js
-npm install -s patreon
+npm install --save patreon
 ```
 
 ## Usage
