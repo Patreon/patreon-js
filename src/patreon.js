@@ -4,7 +4,7 @@ import oauth from './oauth'
 const BASE_HOST = 'https://api.patreon.com'
 const BASE_PATH = '/oauth2/api'
 
-export default function (accessToken, config) {
+function patreon (accessToken, config) {
     return function (_req, callback) {
         const options = normalizeRequest(_req)
 
@@ -20,7 +20,9 @@ export default function (accessToken, config) {
     }
 }
 
-export let ouath = oauth
+patreon.oauth = oauth
+
+export default patreon
 
 function normalizeRequest (_req) {
     if (typeof config === 'string') {
