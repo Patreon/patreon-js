@@ -1,5 +1,7 @@
 # patreon-js
 
+[![Build State](https://img.shields.io/travis/Patreon/patreon-js.svg?style=flat)](https://travis-ci.org/Patreon/patreon-js)
+
 ## Installation
 
 ```js
