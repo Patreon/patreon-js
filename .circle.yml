@@ -1,0 +1,17 @@
+machine:
+  node:
+    - "4.2"
+    - "4.1"
+    - "4.0"
+    - "0.12"
+    - "0.11"
+    - "0.10"
+    - "iojs"
+
+dependencies:
+  post:
+    - npm run build
+
+test:
+  override:
+    - npm run ci
