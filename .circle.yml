@@ -1,9 +1,6 @@
 machine:
   node:
-    - "5.0"
-    - "4.2"
-    - "0.12"
-    - "iojs"
+    version: 0.12.0
 
 test:
   override:
