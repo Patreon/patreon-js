@@ -8,9 +8,8 @@ test('patreon', (assert) => {
     nock('https://api.patreon.com')
         .get('/oauth2/api/current_user')
         .reply(200, function (uri, body) {
-            assert.equal(
-                this.req.headers.authorization,
-                'Bearer token',
+            assert.ok(
+                this.req.headers.authorization.indexOf('Bearer token') > -1,
                 'Authorization header should be "Bearer token"'
             )
 
