@@ -1,6 +1,6 @@
 import test from 'tape'
 import nock from 'nock'
-import oauth from '../dist/oauth'
+import oauth from '../src/oauth'
 
 const mockTokenPayload = JSON.stringify({
     access_token: 'access',
