@@ -1,6 +1,6 @@
 # patreon-js
 
-[![Build State](https://img.shields.io/travis/Patreon/patreon-js.svg?style=flat)](https://travis-ci.org/Patreon/patreon-js)
+[![Build State](https://img.shields.io/circleci/project/Patreon/patreon-js.svg?style=flat)](https://circleci.com/gh/Patreon/patreon-js)
 
 Use the Patreon API via OAuth.
 
