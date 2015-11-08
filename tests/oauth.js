@@ -2,6 +2,17 @@ import test from 'tape'
 import nock from 'nock'
 import oauth from '../src/oauth'
 
+const mockTokenPayload = JSON.stringify({
+    access_token: 'access',
+    refresh_token: 'refresh',
+    expires_in: 'expires',
+    scope: 'users pledges-to-me my-campaign',
+    token_type: 'Bearer'
+})
+
+/**
+ * INIT
+ */
 test('oauth', (assert) => {
     const { getTokens, refreshToken } = oauth('id', 'secret')
 
@@ -11,30 +22,31 @@ test('oauth', (assert) => {
     assert.end()
 })
 
+/**
+ * GET TOKENS
+ */
 test('oauth getTokens', (assert) => {
     assert.plan(5)
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
         .reply(200, function (uri, body) {
-            assert.equal(
-                body,
-                (
-                    'client_id=id&client_secret=secret' +
-                    '&code=code&grant_type=authorization_code' +
-                    '&redirect_uri=%2Fredirect'
-                ),
-                'params should be sent as form data'
+            const params = (
+                'client_id=id&client_secret=secret' +
+                '&code=code&grant_type=authorization_code' +
+                '&redirect_uri=%2Fredirect'
             )
 
-            return { accessToken: 'heyheyhey' }
+            assert.equal(body, params, 'params should be sent as form data')
+
+            return mockTokenPayload
         })
 
     const { getTokens } = oauth('id', 'secret')
 
     getTokens('code', '/redirect', function (err, body) {
         assert.equal(err, null, 'err should be null')
-        assert.ok(body.accessToken, 'body should be parsed json object')
+        assert.ok(body.access_token, 'body should be parsed json object')
     })
 
     nock('https://api.patreon.com')
@@ -47,29 +59,30 @@ test('oauth getTokens', (assert) => {
     })
 })
 
+/**
+ * REFRESH TOKENS
+ */
 test('oauth refreshToken', (assert) => {
     assert.plan(5)
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
         .reply(200, function (uri, body) {
-            assert.equal(
-                body,
-                (
-                    'client_id=id&client_secret=secret&' +
-                    'refresh_token=token&grant_type=refresh_token'
-                ),
-                'params should be sent as form data'
+            const params = (
+                'client_id=id&client_secret=secret&' +
+                'refresh_token=token&grant_type=refresh_token'
             )
 
-            return { pass: true }
+            assert.equal(body, params, 'params should be sent as form data')
+
+            return mockTokenPayload
         })
 
     const { refreshToken } = oauth('id', 'secret')
 
     refreshToken('token', function (err, body) {
         assert.equal(err, null, 'err should be null')
-        assert.ok(body.pass, 'body should be parsed json object')
+        assert.ok(body.refresh_token, 'body should be parsed json object')
     })
 
     nock('https://api.patreon.com')

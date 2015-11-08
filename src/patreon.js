@@ -1,5 +1,5 @@
-import request from 'request'
-import oauth from './oauth'
+import fetch from 'isomorphic-fetch'
+import _oauth from './oauth'
 
 const BASE_HOST = 'https://api.patreon.com'
 const BASE_PATH = 'oauth2/api'
@@ -12,22 +12,25 @@ function patreon (accessToken, config) {
         if (typeof callback !== 'function') return callApi(options)
 
         callApi(options, callback)
+    }
 
-        function callApi (_options, _callback) {
-            request({
-                ..._options,
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            }, function (err, resp, body) {
-                if (err) return _callback(err)
-                return _callback(null, JSON.parse(body))
-            })
-        }
+    function callApi (options, callback) {
+        let _res
+        fetch(options.url, {
+            ...options,
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            },
+            credentials: 'include'
+        })
+        .then(res => { _res = res; return res.json() })
+        .then(json => { _res.ok ? callback(null, json, _res) : callback(_res.status) })
+        .catch(err => callback(err))
     }
 }
 
-patreon.oauth = oauth
+patreon.oauth = _oauth
+export const oauth = _oauth
 
 export default patreon
 
