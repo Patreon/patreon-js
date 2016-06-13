@@ -25,51 +25,65 @@ When you see `'pppp'` replace `pppp` with the data you received setting up
 your OAuth account or otherwise suggested by the inline comments.
 
 ```js
+var url = require('url')
 var patreon = require('patreon')
+var patreonAPI = patreon.default
+var patreonOAuth = patreon.oauth
 
 // Use the client id and secret you received when setting up your OAuth account
 var CLIENT_ID = 'pppp'
 var CLIENT_SECRET = 'pppp'
+var patreonOAuthClient = patreonOAuth(CLIENT_ID, CLIENT_SECRET)
 
-var getTokens = patreon.oauth(CLIENT_ID, CLIENT_SECRET).getTokens
-
-// This is provided as a query param (?code=pppp) after authenticating on patreon.com
-var code = 'pppp'
 // This should be one of the fully qualified redirect_uri you used when setting up your oauth account
-var redirect = 'http://mypatreonapp.com/oauth/redirect'
+var redirectURL = 'http://mypatreonapp.com/oauth/redirect'
 
-getTokens(code, redirect, function (err, tokens) {
-    client = patreon(tokens.access_token)
+function handleOAuthRedirectRequest(request, response) {
+    var oauthGrantCode = url.parse(request.url, true).query.code
 
-    client(`/current_user`, function (err, user) {
-        if (err) return console.error(err)
+    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL, function (tokensError, tokens) {
+        var patreonAPIClient = patreonAPI(tokens.access_token)
 
-        console.log(user)
+        patreonAPIClient(`/current_user`, function (currentUserError, apiResponse) {
+            if (currentUserError) {
+                console.error(currentUserError)
+                response.end(currentUserError)
+            }
+
+            response.end(apiResponse)
+        })
     })
-})
+}
 ```
 
 If you're using [babel](https://babeljs.io) or writing [es2015](https://babeljs.io/docs/learn-es2015/) code:
 
 ```js
-const patreon, { oauth } from 'patreon'
+import url from 'url'
+import patreonAPI, { oauth as patreonOAuth } from 'patreon'
 
 const CLIENT_ID = 'pppp'
 const CLIENT_SECRET = 'pppp'
+const patreonOAuthClient = patreonOAuth(CLIENT_ID, CLIENT_SECRET)
 
-const code = 'pppp'
-const redirect = 'http://mypatreonapp.com/oauth/redirect'
+const redirectURL = 'http://mypatreonapp.com/oauth/redirect'
 
-const { getTokens } = oauth(CLIENT_ID, CLIENT_SECRET)
-getTokens(code, redirect, (err, { access_token }) => {
-    const client = patreon(access_token)
+function handleOAuthRedirectRequest(request, response) {
+    const oauthGrantCode = url.parse(request.url, true).query.code
 
-    client(`/current_user`, (err, body) => {
-        if (err) return console.error(err)
+    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL, (tokensError, { access_token }) => {
+        const patreonAPIClient = patreonAPI(access_token)
 
-        console.log(body)
+        patreonAPIClient(`/current_user`, (currentUserError, apiResponse) => {
+            if (currentUserError) {
+                console.error(currentUserError)
+                response.end(currentUserError)
+            }
+
+            response.end(apiResponse);
+        })
     })
-});
+})
 ```
 
 You can also reference the included [server example](/examples/server.js).
