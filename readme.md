@@ -4,17 +4,19 @@
 
 Use the Patreon API via OAuth.
 
+
 ## Setup
 
 You'll need to register an OAuth client account to receive a `client_id`, `client_secret` and other info for use with this module.
 
 Visit the [OAuth Documentation Page](https://www.patreon.com/oauth2/documentation) **while logged in as a Patreon creator on patreon.com** to register your client.
 
+
 ## Installation
 
 Install with [npm](https://www.npmjs.com). You'll need to have [Node.js](https://nodejs.org) installed.
 
-```js
+```
 npm install --save patreon
 ```
 
@@ -88,6 +90,7 @@ function handleOAuthRedirectRequest(request, response) {
 
 You can also reference the included [server example](/examples/server.js).
 
+
 ## Methods
 
 ### var pTokens = oauth(clientId, clientSecret)
@@ -125,11 +128,33 @@ Returns a function for making authenticated API calls.
 
 ### client(pathname, callback(err, body))
 
-`pathane` API resource path like `/current_user`.  
+`pathname` API resource path like `/current_user`.
 `callback` Called with an `err` if there is one, `body` is the [json:api](http://jsonapi.org)
 response for the resource.
 
+
 ## API Resources
+
+### Routes
 
 `/current_user`  
 `/current_user/campaigns`
+`/campaigns/${campaign_id}/pledges`
+
+### Response Format
+
+You can request specific [related resources](http://jsonapi.org/format/#fetching-includes)
+and or [resource attributes](http://jsonapi.org/format/#fetching-sparse-fieldsets)
+that you want returned by our API, as per the [JSON:API specification](http://jsonapi.org/).
+The lists of valid `includes` and `fields` arguments are provided in `patreon/schemas`.
+For instance, if you wanted to request the total amount a patron has ever paid to your campaign,
+which is not included by default, you could do:
+```js
+const patreonAPIClient = patreonAPI(access_token)
+const url = jsonApiURL(`/current_user`, {
+  fields: {
+    pledge: [...pledge_schema.default_attributes, pledge_schema.attributes.total_historical_amount_cents]
+  }
+})
+patreonAPIClient(url, callback)
+```
