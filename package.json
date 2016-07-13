@@ -27,6 +27,7 @@
   "dependencies": {
     "form-urlencoded": "0.1.4",
     "isomorphic-fetch": "2.2.0",
+    "is-plain-object": "^2.0.1",
     "verror": "1.6.0"
   },
   "devDependencies": {
