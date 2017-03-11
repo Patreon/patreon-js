@@ -54,7 +54,7 @@ export default function (clientId, clientSecret) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
-            body: formurlencoded.encode(params),
+            body: formurlencoded(params),
             params: params,
             credentials: 'include',
             compress: false
