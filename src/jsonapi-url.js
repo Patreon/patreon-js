@@ -19,7 +19,7 @@ const encodeParams = (params) => {
     , '')
 }
 
-export default function(url, _params) {
+function jsonApiURL(url, _params) {
     const separator = url.includes('?') ? '&' : '?'
 
     const params = _params
@@ -28,3 +28,5 @@ export default function(url, _params) {
 
     return `${url}${separator}${params}`
 }
+
+export default jsonApiURL

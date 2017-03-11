@@ -2,7 +2,7 @@
   "name": "patreon",
   "version": "0.1.0",
   "description": "Use the Patreon API via OAuth.",
-  "main": "dist/patreon.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "node_modules/.bin/babel src -d dist",
     "examples": "babel-node examples/server.js",

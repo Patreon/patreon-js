@@ -24,7 +24,7 @@ function handleError(err) {
     }
 }
 
-export default function (clientId, clientSecret) {
+function oauth (clientId, clientSecret) {
     const baseParams = {
         client_id: clientId,
         client_secret: clientSecret
@@ -76,3 +76,5 @@ export default function (clientId, clientSecret) {
         refreshToken: refresh
     }
 }
+
+export default oauth
