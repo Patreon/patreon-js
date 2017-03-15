@@ -24,13 +24,13 @@ function handleError(err) {
     }
 }
 
-function oauth (clientId, clientSecret) {
+function oauth(clientId, clientSecret) {
     const baseParams = {
         client_id: clientId,
         client_secret: clientSecret
     }
 
-    function get (code, redirectUri, callback) {
+    function get(code, redirectUri, callback) {
         return updateToken({
             ...baseParams,
             code,
@@ -39,7 +39,7 @@ function oauth (clientId, clientSecret) {
         }, callback)
     }
 
-    function refresh (token, callback) {
+    function refresh(token, callback) {
         return updateToken({
             ...baseParams,
             refresh_token: token,
@@ -47,8 +47,8 @@ function oauth (clientId, clientSecret) {
         }, callback)
     }
 
-    function updateToken (params, callback) {
-        const url = `https://api.patreon.com/oauth2/token`
+    function updateToken(params, callback) {
+        const url = 'https://api.patreon.com/oauth2/token'
         const _req = {
             method: 'POST',
             headers: {

@@ -62,7 +62,7 @@ const server = app.listen(5000, () => {
     console.log(`Listening on http:/localhost:${port}`)
 })
 
-function oauthExampleTpl ({user, campaigns}) {
+function oauthExampleTpl({ user, campaigns }) {
     return `
 <!DOCTYPE html>
 <html>

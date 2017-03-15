@@ -16,7 +16,7 @@ const encodeParams = (params) => {
     if (!params) return ''
     return Object.keys(params).reduce((memo, key) =>
         `${memo}${encodeParam(params[key], key)}`
-    , '')
+        , '')
 }
 
 function jsonApiURL(url, _params) {
