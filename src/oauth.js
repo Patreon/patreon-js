@@ -61,14 +61,16 @@ function oauth(clientId, clientSecret) {
         }
 
         let _res
-        fetch(url, _req)
+        return fetch(url, _req)
             .then(res => { _res = res; return res.json() })
             .then(json => {
-                if (json.error) callback(handleError(json.error)(json, _req, _res))
-
-                callback(null, json, _res)
+                return (json.error)
+                    ? Promise.reject(handleError(json.error)(json, _req, _res))
+                    : Promise.resolve(json)
             })
-            .catch(err => callback(err))
+            .catch(err => {
+                return Promise.reject(err)
+            })
     }
 
     return {
