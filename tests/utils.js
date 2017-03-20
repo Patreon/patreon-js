@@ -1,5 +1,5 @@
 import test from 'tape'
-import { stripPreSlash, normalizeRequest } from '../src/utils'
+import { stripPreSlash, normalizeRequest, checkStatus } from '../src/utils'
 
 test('stripPreSlash', (assert) => {
     assert.equal(stripPreSlash('/test'), 'test', 'strips string w/slash')
@@ -35,4 +35,38 @@ test('normalizeRequest', (assert) => {
         key: 'value',
         query: 'query'
     }, 'correctly parses request object without url')
+})
+
+test('checkStatus', (assert) => {
+    assert.plan(2)
+
+    const goodResponse = {
+        status: 200,
+        key: 'value'
+    }
+    checkStatus(goodResponse)
+        .then((res) => {
+            assert.deepEqual(res, {
+                status: 200,
+                key: 'value'
+            }, 'properly formatted json should resolve the json')
+        })
+        .catch((err) => {
+            assert.fail('promise failed unexpectedly!')
+        })
+
+    const badResponse = {
+        status: 300,
+        key: 'value'
+    }
+    checkStatus(badResponse)
+        .then((res) => {
+            assert.fail('promise passed unexpectedly!')
+        })
+        .catch((err) => {
+            assert.deepEqual(err, {
+                status: 300,
+                key: 'value'
+            }, 'improperly formatted response should reject the json')
+        })
 })

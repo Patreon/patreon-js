@@ -17,4 +17,12 @@ function normalizeRequest(request) {
         }
 }
 
-export { stripPreSlash, normalizeRequest }
+function checkStatus(response) {
+    return Promise.reject()
+}
+
+function getJson(response) {
+    return Promise.reject()
+}
+
+export { stripPreSlash, normalizeRequest, checkStatus, getJson }
