@@ -1,14 +1,15 @@
 import fetch from 'isomorphic-fetch'
 import VError from 'verror'
 import formurlencoded from 'form-urlencoded'
+import { checkStatus, getJson } from './utils'
 
 const expectedErrorMap = {
-    invalid_grant: (body, _req) => {
-        return new VError('Invalid grant_type: "%s"', _req.params.grant_type)
+    invalid_grant: (body, req) => {
+        return new VError('Invalid grant_type: "%s"', req.params.grant_type)
     },
 
-    invalid_client: (body, _req) => {
-        return new VError('Invalid client_id: %s', _req.params.client_id)
+    invalid_client: (body, req) => {
+        return new VError('Invalid client_id: %s', req.params.client_id)
     }
 }
 
@@ -17,8 +18,8 @@ function handleError(err) {
         ? expectedErrorMap[err]
         : (body) => new VError('Unknown error: %s, %s', err, body)
 
-    return (body, req, res) => {
-        const _err = errFn(body, req, res)
+    return (body, req) => {
+        const _err = errFn(body, req)
         _err.params = req.params
         return _err
     }
@@ -26,7 +27,7 @@ function handleError(err) {
 
 function updateToken(params) {
     const url = 'https://api.patreon.com/oauth2/token'
-    const _req = {
+    const options = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -37,12 +38,12 @@ function updateToken(params) {
         compress: false
     }
 
-    let _res
-    return fetch(url, _req)
-        .then(res => { _res = res; return res.json() })
+    return fetch(url, options)
+        .then(checkStatus)
+        .then(getJson)
         .then(json => {
             return (json.error)
-                ? Promise.reject(handleError(json.error)(json, _req, _res))
+                ? Promise.reject(handleError(json.error)(json, options))
                 : Promise.resolve(json)
         })
         .catch(err => {

@@ -1,23 +1,19 @@
 import fetch from 'isomorphic-fetch'
-import { normalizeRequest } from '../src/utils'
+import { normalizeRequest, checkStatus, getJson } from './utils'
 
 function patreon(accessToken, config) {
-    return function (_req) {
-        const options = normalizeRequest(_req)
-        let _res
-        return fetch(options.url, {
-            ...options,
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            },
+    return function (request) {
+        const normalizedRequest = normalizeRequest(request)
+        const url = normalizedRequest.url
+        const options = {
+            ...normalizedRequest,
+            headers: { 'Authorization': `Bearer ${accessToken}` },
             credentials: 'include'
-        })
-            .then(res => { _res = res; return res.json() })
-            .then(json => {
-                return (!_res.ok)
-                    ? Promise.reject(_res.status)
-                    : Promise.resolve(json)
-            })
+        }
+
+        return fetch(url, options)
+            .then(checkStatus)
+            .then(getJson)
             .catch(err => {
                 return Promise.reject(err)
             })
