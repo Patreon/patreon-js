@@ -24,58 +24,54 @@ function handleError(err) {
     }
 }
 
+function updateToken(params) {
+    const url = 'https://api.patreon.com/oauth2/token'
+    const _req = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        body: formurlencoded(params),
+        params: params,
+        credentials: 'include',
+        compress: false
+    }
+
+    let _res
+    return fetch(url, _req)
+        .then(res => { _res = res; return res.json() })
+        .then(json => {
+            return (json.error)
+                ? Promise.reject(handleError(json.error)(json, _req, _res))
+                : Promise.resolve(json)
+        })
+        .catch(err => {
+            return Promise.reject(err)
+        })
+}
+
 function oauth(clientId, clientSecret) {
     const baseParams = {
         client_id: clientId,
         client_secret: clientSecret
     }
 
-    function get(code, redirectUri, callback) {
-        return updateToken({
-            ...baseParams,
-            code,
-            grant_type: 'authorization_code',
-            redirect_uri: redirectUri
-        }, callback)
-    }
-
-    function refresh(token, callback) {
-        return updateToken({
-            ...baseParams,
-            refresh_token: token,
-            grant_type: 'refresh_token'
-        }, callback)
-    }
-
-    function updateToken(params, callback) {
-        const url = 'https://api.patreon.com/oauth2/token'
-        const _req = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
-            body: formurlencoded(params),
-            params: params,
-            credentials: 'include',
-            compress: false
-        }
-
-        let _res
-        return fetch(url, _req)
-            .then(res => { _res = res; return res.json() })
-            .then(json => {
-                return (json.error)
-                    ? Promise.reject(handleError(json.error)(json, _req, _res))
-                    : Promise.resolve(json)
-            })
-            .catch(err => {
-                return Promise.reject(err)
-            })
-    }
-
     return {
-        getTokens: get,
-        refreshToken: refresh
+        getTokens: (code, redirectUri) => {
+            return updateToken({
+                ...baseParams,
+                code,
+                grant_type: 'authorization_code',
+                redirect_uri: redirectUri
+            })
+        },
+        refreshToken: (token) => {
+            return updateToken({
+                ...baseParams,
+                refresh_token: token,
+                grant_type: 'refresh_token'
+            })
+        }
     }
 }
 

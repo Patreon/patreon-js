@@ -4,16 +4,8 @@ const BASE_HOST = 'https://api.patreon.com'
 const BASE_PATH = 'oauth2/api'
 
 function patreon(accessToken, config) {
-    return function (_req, callback) {
+    return function (_req) {
         const options = normalizeRequest(_req)
-
-        // no callback, return stream
-        if (typeof callback !== 'function') return callApi(options)
-
-        callApi(options, callback)
-    }
-
-    function callApi(options, callback) {
         let _res
         return fetch(options.url, {
             ...options,
