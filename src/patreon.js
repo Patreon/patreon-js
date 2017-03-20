@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch'
 const BASE_HOST = 'https://api.patreon.com'
 const BASE_PATH = 'oauth2/api'
 
-function patreon (accessToken, config) {
+function patreon(accessToken, config) {
     return function (_req, callback) {
         const options = normalizeRequest(_req)
 
@@ -13,22 +13,28 @@ function patreon (accessToken, config) {
         callApi(options, callback)
     }
 
-    function callApi (options, callback) {
+    function callApi(options, callback) {
         let _res
-        fetch(options.url, {
+        return fetch(options.url, {
             ...options,
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             },
             credentials: 'include'
         })
-        .then(res => { _res = res; return res.json() })
-        .then(json => { _res.ok ? callback(null, json, _res) : callback(_res.status) })
-        .catch(err => callback(err))
+            .then(res => { _res = res; return res.json() })
+            .then(json => {
+                return (!_res.ok)
+                    ? Promise.reject(_res.status)
+                    : Promise.resolve(json)
+            })
+            .catch(err => {
+                return Promise.reject(err)
+            })
     }
 }
 
-function normalizeRequest (_req) {
+function normalizeRequest(_req) {
     if (typeof _req === 'string') {
         return {
             url: `${BASE_HOST}/${BASE_PATH}/${_stripPreSlash(_req)}`,
@@ -42,7 +48,7 @@ function normalizeRequest (_req) {
     }
 }
 
-function _stripPreSlash (str) {
+function _stripPreSlash(str) {
     return str.replace(/^\//, '')
 }
 
