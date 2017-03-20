@@ -18,11 +18,17 @@ function normalizeRequest(request) {
 }
 
 function checkStatus(response) {
-    return Promise.reject()
+    return (response.status >= 200 && response.status < 300)
+        ? Promise.resolve(response)
+        : Promise.reject(response)
 }
 
 function getJson(response) {
-    return Promise.reject()
+    try {
+        return response.json()
+    } catch (err) {
+        return response
+    }
 }
 
 export { stripPreSlash, normalizeRequest, checkStatus, getJson }
