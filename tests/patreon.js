@@ -18,8 +18,12 @@ test('patreon', (assert) => {
 
     const client = patreon('token')
 
-    client('/current_user', function (err, body) {
-        assert.equal(err, null, 'err should be null')
-        assert.equal(body.user, 'test', 'body should be a parsed json object')
-    })
+    client('/current_user')
+        .then((res) => {
+            assert.ok(res, 'res should be a parsed json object')
+            assert.equal(res.user, 'test', 'res.test should equal "test"')
+        })
+        .catch((err) => {
+            throw new Error('promise failed unexpectedly!')
+        })
 })
