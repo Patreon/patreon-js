@@ -82,7 +82,7 @@ test('oauth getTokens', (assert) => {
         })
         .catch((err) => {
             assert.notEqual(err, null, 'err should not be null')
-            assert.equal(err.message, 'Invalid grant_type: "authorization_code"', 'err message should include grant type')
+            assert.equal(err.message, 'Invalid grant_type: authorization_code', 'err message should include grant type')
         })
 })
 

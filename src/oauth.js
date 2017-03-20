@@ -1,27 +1,14 @@
 import fetch from 'isomorphic-fetch'
-import VError from 'verror'
 import formurlencoded from 'form-urlencoded'
 import { checkStatus, getJson } from './utils'
 
-const expectedErrorMap = {
-    invalid_grant: (body, req) => {
-        return new VError('Invalid grant_type: "%s"', req.params.grant_type)
-    },
-
-    invalid_client: (body, req) => {
-        return new VError('Invalid client_id: %s', req.params.client_id)
-    }
-}
-
-function handleError(err) {
-    const errFn = typeof expectedErrorMap[err] === 'function'
-        ? expectedErrorMap[err]
-        : (body) => new VError('Unknown error: %s, %s', err, body)
-
-    return (body, req) => {
-        const _err = errFn(body, req)
-        _err.params = req.params
-        return _err
+function errMap(err, params) {
+    if (err === 'invalid_grant') {
+        return `Invalid grant_type: ${params.grant_type}`
+    } else if (err === 'invalid_client') {
+        return `Invalid client_id: ${params.client_id}`
+    } else {
+        return `Unknown error: ${err}`
     }
 }
 
@@ -43,7 +30,11 @@ function updateToken(params) {
         .then(getJson)
         .then(json => {
             return (json.error)
-                ? Promise.reject(handleError(json.error)(json, options))
+                ? Promise.reject({
+                    message: errMap(json.error, params),
+                    body: json,
+                    params
+                })
                 : Promise.resolve(json)
         })
         .catch(err => {
