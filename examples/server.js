@@ -1,4 +1,4 @@
-import patreon, { oauth } from '../src/patreon'
+import { oauth, patreon } from '../dist/index.js'
 
 import express from 'express'
 import { format as formatUrl } from 'url'
@@ -9,8 +9,13 @@ const jsonStyles = fs.readFileSync(__dirname + '/../node_modules/json-markup/sty
 
 const app = express()
 
-const id = process.env.PATREON_CLIENT_ID
-const secret = process.env.PATREON_CLIENT_SECRET
+const clientId = process.env.PATREON_CLIENT_ID
+const clientSecret = process.env.PATREON_CLIENT_SECRET
+
+const oauthClient = oauth(clientId, clientSecret)
+
+// mimic a database
+let database = {}
 
 // redirect_uri should be the full redirect url
 const redirect = 'http://localhost:5000/oauth/redirect'
@@ -21,7 +26,7 @@ const loginUrl = formatUrl({
     pathname: '/oauth2/authorize',
     query: {
         response_type: 'code',
-        client_id: id,
+        client_id: clientId,
         redirect_uri: redirect,
         state: 'chill'
     }
@@ -33,28 +38,54 @@ app.get('/', (req, res) => {
 
 app.get('/oauth/redirect', (req, res) => {
     const { code } = req.query
-    const { getTokens } = oauth(id, secret)
+    let token
 
-    getTokens(code, redirect, (err, { access_token }) => {
-        if (err) {
-            console.error(err)
-            return res.send(err.message)
-        }
-
-        const client = patreon(access_token)
-
-        client('/current_user', (uerr, user) => {
-            if (uerr) return console.error(uerr)
-
-            client('/current_user/campaigns', (cerr, campaigns) => {
-                if (cerr) return console.error(cerr)
-
-                res.send(
-                    oauthExampleTpl({ user, campaigns })
-                )
-            })
+    return oauthClient.getToken(code, redirect)
+        .then(({ access_token }) => {
+            token = access_token // eslint-disable-line camelcase
+            const apiClient = patreon(token)
+            return apiClient('/current_user')
         })
-    })
+        .then((user) => {
+            const { id } = user.data
+            database[id] = { ...user.data, token }
+            console.log(`Saved user ${user.data.attributes.full_name} to the database`)
+            return res.redirect(`/protected/${id}`)
+        })
+        .catch((err) => {
+            console.log(err)
+            console.log('Redirecting to login')
+            res.redirect('/')
+        })
+})
+
+app.get('/protected/:id', (req, res) => {
+    const { id } = req.params
+
+    // load the user from the database
+    const user = database[id]
+    if (!user || !user.token) {
+        return res.redirect('/')
+    }
+
+    const apiClient = patreon(user.token)
+
+    // make api requests concurrently
+    return Promise.all([
+        apiClient('/current_user/campaigns')
+    ])
+        .then(([campaigns]) => {
+            const page = oauthExampleTpl({
+                name: user.attributes.first_name,
+                campaigns
+            })
+            return res.send(page)
+        }).catch((err) => {
+            const { status, statusText } = err
+            console.log('Failed to retrieve campaign info')
+            console.log(err)
+            return res.json({ status, statusText })
+        })
 })
 
 const server = app.listen(5000, () => {
@@ -62,13 +93,13 @@ const server = app.listen(5000, () => {
     console.log(`Listening on http:/localhost:${port}`)
 })
 
-function oauthExampleTpl({ user, campaigns }) {
+function oauthExampleTpl({ name, campaigns }) {
     return `
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Oath Results</title>
+        <title>OAuth Results</title>
         <style>
             .container {
                 max-width: 800px;
@@ -85,12 +116,8 @@ function oauthExampleTpl({ user, campaigns }) {
     </head>
     <body>
         <div class="container">
-            <h1>Oauth Example</h1>
-
-            <h2>/current_user</h2>
-            <div class="jsonsample">${jsonMarkup(user)}</div>
-
-            <h2>/current_user/campaigns</h2>
+            <h1>Welcome, ${name}!</h1>
+            <h2>Campaigns</h2>
             <div class="jsonsample">${jsonMarkup(campaigns)}</div>
         </div>
     </body>
