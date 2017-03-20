@@ -57,7 +57,7 @@ test('oauth getTokens', (assert) => {
             assert.ok(res, 'res should be parsed json object')
         })
         .catch((err) => {
-            throw new Error('promise failed unexpectedly!')
+            assert.fail('promise failed unexpectedly!')
         })
 
     nock('https://api.patreon.com')
@@ -66,7 +66,7 @@ test('oauth getTokens', (assert) => {
 
     getTokens('code', '/redirect')
         .then((res) => {
-            throw new Error('promise passed unexpectedly!')
+            assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {
             assert.notEqual(err, null, 'err should not be null')
@@ -78,7 +78,7 @@ test('oauth getTokens', (assert) => {
 
     getTokens('code', '/redirect')
         .then((res) => {
-            throw new Error('promise passed unexpectedly!')
+            assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {
             assert.notEqual(err, null, 'err should not be null')
@@ -112,7 +112,7 @@ test('oauth refreshToken', (assert) => {
             assert.ok(res, 'body should be parsed json object')
         })
         .catch((err) => {
-            throw new Error('promise failed unexpectedly!')
+            assert.fail('promise failed unexpectedly!')
         })
 
     nock('https://api.patreon.com')
@@ -121,7 +121,7 @@ test('oauth refreshToken', (assert) => {
 
     refreshToken('token')
         .then((res) => {
-            throw new Error('promise passed unexpectedly!')
+            assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {
             assert.notEqual(err, null, 'err should not be null')
@@ -133,7 +133,7 @@ test('oauth refreshToken', (assert) => {
 
     refreshToken('token')
         .then((res) => {
-            throw new Error('promise passed unexpectedly!')
+            assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {
             assert.notEqual(err, null, 'err should not be null')
