@@ -10,6 +10,14 @@ const mockTokenPayload = JSON.stringify({
     token_type: 'Bearer'
 })
 
+const mockInvalidGrant = JSON.stringify({
+    error: 'invalid_grant'
+})
+
+const mockInvalidClient = JSON.stringify({
+    error: 'invalid_client'
+})
+
 /**
  * INIT
  */
@@ -26,7 +34,7 @@ test('oauth', (assert) => {
  * GET TOKENS promisified
  */
 test('oauth getTokens', (assert) => {
-    assert.plan(3)
+    assert.plan(5)
 
     const { getTokens } = oauth('id', 'secret')
 
@@ -63,13 +71,26 @@ test('oauth getTokens', (assert) => {
         .catch((err) => {
             assert.notEqual(err, null, 'err should not be null')
         })
+
+    nock('https://api.patreon.com')
+        .post('/oauth2/token')
+        .reply(200, () => { return mockInvalidGrant })
+
+    getTokens('code', '/redirect')
+        .then((res) => {
+            throw new Error('promise passed unexpectedly!')
+        })
+        .catch((err) => {
+            assert.notEqual(err, null, 'err should not be null')
+            assert.equal(err.message, 'Invalid grant_type: "authorization_code"', 'err message should include grant type')
+        })
 })
 
 /**
  * REFRESH TOKENS promisified
  */
 test('oauth refreshToken', (assert) => {
-    assert.plan(3)
+    assert.plan(5)
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
@@ -104,5 +125,18 @@ test('oauth refreshToken', (assert) => {
         })
         .catch((err) => {
             assert.notEqual(err, null, 'err should not be null')
+        })
+
+    nock('https://api.patreon.com')
+        .post('/oauth2/token')
+        .reply(200, () => { return mockInvalidClient })
+
+    refreshToken('token')
+        .then((res) => {
+            throw new Error('promise passed unexpectedly!')
+        })
+        .catch((err) => {
+            assert.notEqual(err, null, 'err should not be null')
+            assert.equal(err.message, 'Invalid client_id: id', 'err message should client id')
         })
 })
