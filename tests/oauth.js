@@ -23,10 +23,12 @@ test('oauth', (assert) => {
 })
 
 /**
- * GET TOKENS
+ * GET TOKENS promisified
  */
 test('oauth getTokens', (assert) => {
-    assert.plan(5)
+    assert.plan(3)
+
+    const { getTokens } = oauth('id', 'secret')
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
@@ -42,28 +44,32 @@ test('oauth getTokens', (assert) => {
             return mockTokenPayload
         })
 
-    const { getTokens } = oauth('id', 'secret')
-
-    getTokens('code', '/redirect', function (err, body) {
-        assert.equal(err, null, 'err should be null')
-        assert.ok(body.access_token, 'body should be parsed json object')
-    })
+    getTokens('code', '/redirect')
+        .then((res) => {
+            assert.ok(res, 'res should be parsed json object')
+        })
+        .catch((err) => {
+            throw new Error('promise failed unexpectedly!')
+        })
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
         .replyWithError('Oh geeze')
 
-    getTokens('code', '/redirect', function (err, body) {
-        assert.notEqual(err, null, 'err should not be null')
-        assert.equal(typeof body, 'undefined', 'body should be undefined if err')
-    })
+    getTokens('code', '/redirect')
+        .then((res) => {
+            throw new Error('promise passed unexpectedly!')
+        })
+        .catch((err) => {
+            assert.notEqual(err, null, 'err should not be null')
+        })
 })
 
 /**
- * REFRESH TOKENS
+ * REFRESH TOKENS promisified
  */
 test('oauth refreshToken', (assert) => {
-    assert.plan(5)
+    assert.plan(3)
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
@@ -80,17 +86,23 @@ test('oauth refreshToken', (assert) => {
 
     const { refreshToken } = oauth('id', 'secret')
 
-    refreshToken('token', function (err, body) {
-        assert.equal(err, null, 'err should be null')
-        assert.ok(body.refresh_token, 'body should be parsed json object')
-    })
+    refreshToken('token')
+        .then((res) => {
+            assert.ok(res, 'body should be parsed json object')
+        })
+        .catch((err) => {
+            throw new Error('promise failed unexpectedly!')
+        })
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
         .replyWithError('Oh geeze')
 
-    refreshToken('token', function (err, body) {
-        assert.notEqual(err, null, 'err should not be null')
-        assert.equal(typeof body, 'undefined', 'body should be undefined if err')
-    })
+    refreshToken('token')
+        .then((res) => {
+            throw new Error('promise passed unexpectedly!')
+        })
+        .catch((err) => {
+            assert.notEqual(err, null, 'err should not be null')
+        })
 })
