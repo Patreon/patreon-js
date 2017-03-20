@@ -1,7 +1,5 @@
 import fetch from 'isomorphic-fetch'
-
-const BASE_HOST = 'https://api.patreon.com'
-const BASE_PATH = 'oauth2/api'
+import { normalizeRequest } from '../src/utils'
 
 function patreon(accessToken, config) {
     return function (_req) {
@@ -24,24 +22,6 @@ function patreon(accessToken, config) {
                 return Promise.reject(err)
             })
     }
-}
-
-function normalizeRequest(_req) {
-    if (typeof _req === 'string') {
-        return {
-            url: `${BASE_HOST}/${BASE_PATH}/${_stripPreSlash(_req)}`,
-            method: 'GET'
-        }
-    }
-
-    return {
-        ..._req,
-        url: `${BASE_HOST}/${BASE_PATH}` + _stripPreSlash(_req.url || _req.uri || '')
-    }
-}
-
-function _stripPreSlash(str) {
-    return str.replace(/^\//, '')
 }
 
 export default patreon
