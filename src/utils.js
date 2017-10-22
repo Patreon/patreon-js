@@ -24,11 +24,7 @@ function checkStatus(response) {
 }
 
 function getJson(response) {
-    try {
-        return response.json()
-    } catch (err) {
-        return response
-    }
+    return response.json()
 }
 
 export { stripPreSlash, normalizeRequest, checkStatus, getJson }

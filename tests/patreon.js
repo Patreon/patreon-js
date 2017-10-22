@@ -3,7 +3,7 @@ import nock from 'nock'
 import patreon from '../src/patreon'
 
 test('patreon', (assert) => {
-    assert.plan(4)
+    assert.plan(8)
 
     nock('https://api.patreon.com')
         .get('/oauth2/api/current_user')
@@ -13,18 +13,49 @@ test('patreon', (assert) => {
                 'Authorization header should be "Bearer token"'
             )
 
-            return { user: 'test' }
+            return {
+                data: {
+                    type: 'user',
+                    id: '123',
+                    attributes: {
+                        full_name: 'Test User'
+                    },
+                    relationships: {
+                        campaign: {
+                            data: {
+                                type: 'campaign',
+                                id: '456'
+                            }
+                        }
+                    }
+                },
+                included: [{
+                    type: 'campaign',
+                    id: '456',
+                    attributes: {
+                        'pledge_sum': 123456
+                    }
+                }]
+            }
         })
 
     const client = patreon('token')
 
     client('/current_user')
-        .then((res) => {
-            assert.ok(res, 'res should be a parsed json object')
-            assert.equal(res.user, 'test', 'res.test should equal "test"')
+        .then(({ store, rawJson }) => {
+            assert.equal(store.find('user', '123').full_name, 'Test User', 'store should be a JSON:API data store')
+            assert.equal(store.find('user', '123').campaign.pledge_sum, 123456, 'store should be a JSON:API data store')
+
+            assert.ok(rawJson, 'rawJson should be a parsed rawJson object')
+            assert.equal(rawJson.data.attributes.full_name, 'Test User', 'rawJson should have the correct content')
+
+            const _store = client.getStore()
+            console.log('_st', JSON.stringify(_store.findAll('user').map(user => user.serialize())))
+            assert.equal(_store.find('user', '123').full_name, 'Test User', 'store should be a JSON:API data store')
+            assert.equal(_store.find('user', '123').campaign.pledge_sum, 123456, 'store should be a JSON:API data store')
         })
         .catch((err) => {
-            assert.fail('promise failed unexpectedly!')
+            assert.fail(err, 'promise failed unexpectedly!')
         })
 
     nock('https://api.patreon.com')
@@ -32,7 +63,7 @@ test('patreon', (assert) => {
         .replyWithError('Oh geeze')
 
     client('/current_user')
-        .then((res) => {
+        .then((result) => {
             assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {

@@ -11,14 +11,14 @@ const app = express()
 
 const clientId = process.env.PATREON_CLIENT_ID
 const clientSecret = process.env.PATREON_CLIENT_SECRET
+// redirect_uri should be the full redirect url
+const redirect = 'http://localhost:5000/oauth/redirect'
 
 const oauthClient = oauth(clientId, clientSecret)
 
 // mimic a database
 let database = {}
 
-// redirect_uri should be the full redirect url
-const redirect = 'http://localhost:5000/oauth/redirect'
 
 const loginUrl = formatUrl({
     protocol: 'https',
@@ -40,16 +40,16 @@ app.get('/oauth/redirect', (req, res) => {
     const { code } = req.query
     let token
 
-    return oauthClient.getToken(code, redirect)
+    return oauthClient.getTokens(code, redirect)
         .then(({ access_token }) => {
             token = access_token // eslint-disable-line camelcase
             const apiClient = patreon(token)
             return apiClient('/current_user')
         })
-        .then((user) => {
-            const { id } = user.data
-            database[id] = { ...user.data, token }
-            console.log(`Saved user ${user.data.attributes.full_name} to the database`)
+        .then(({ store, rawJson }) => {
+            const { id } = rawJson.data
+            database[id] = { ...rawJson.data, token }
+            console.log(`Saved user ${store.find('user', id).full_name} to the database`)
             return res.redirect(`/protected/${id}`)
         })
         .catch((err) => {
@@ -71,13 +71,13 @@ app.get('/protected/:id', (req, res) => {
     const apiClient = patreon(user.token)
 
     // make api requests concurrently
-    return Promise.all([
-        apiClient('/current_user/campaigns')
-    ])
-        .then(([campaigns]) => {
+    return apiClient('/current_user/campaigns')
+        .then(({ store }) => {
+            const _user = store.find('user', id)
+            const campaign = _user.campaign ? _user.campaign.serialize().data : null
             const page = oauthExampleTpl({
-                name: user.attributes.first_name,
-                campaigns
+                name: _user.first_name,
+                campaigns: [campaign]
             })
             return res.send(page)
         }).catch((err) => {

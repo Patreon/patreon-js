@@ -43,19 +43,24 @@ var redirectURL = 'http://mypatreonapp.com/oauth/redirect'
 function handleOAuthRedirectRequest(request, response) {
     var oauthGrantCode = url.parse(request.url, true).query.code
 
-    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL)
+    patreonOAuthClient
+        .getTokens(oauthGrantCode, redirectURL)
         .then(function(tokensResponse) {
             var patreonAPIClient = patreonAPI(tokensResponse.access_token)
-            return patreonAPIClient(`/current_user`)
+            return patreonAPIClient('/current_user')
         })
-        .then(function(currentUserResponse) {
-            response.end(apiResponse)
+        .then(function(result) {
+            var store = result.store
+            // store is a [JsonApiDataStore](https://github.com/beauby/jsonapi-datastore)
+            // You can also ask for result.rawJson if you'd like to work with unparsed data
+            response.end(store.findAll('user').map(user => user.serialize()))
         })
         .catch(function(err) {
             console.error('error!', err)
             response.end(err)
         })
 }
+
 ```
 
 If you're using [babel](https://babeljs.io) or writing [es2015](https://babeljs.io/docs/learn-es2015/) code:
@@ -73,19 +78,22 @@ const redirectURL = 'http://mypatreonapp.com/oauth/redirect'
 function handleOAuthRedirectRequest(request, response) {
     const oauthGrantCode = url.parse(request.url, true).query.code
 
-    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL)
+    patreonOAuthClient
+        .getTokens(oauthGrantCode, redirectURL)
         .then(tokensResponse => {
             const patreonAPIClient = patreonAPI(tokensResponse.access_token)
-            return patreonAPIClient(`/current_user`)
+            return patreonAPIClient('/current_user')
         })
-        .then(currentUserResponse => {
-            response.end(apiResponse)
+        .then(({ store }) => {
+            // store is a [JsonApiDataStore](https://github.com/beauby/jsonapi-datastore)
+            // You can also ask for result.rawJson if you'd like to work with unparsed data
+            response.end(store.findAll('user').map(user => user.serialize()))
         })
         .catch(err => {
             console.error('error!', err)
             response.end(err)
         })
-})
+}
 ```
 
 You can also reference the included [server example](/examples/server.js).
