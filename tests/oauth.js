@@ -34,7 +34,7 @@ test('oauth', (assert) => {
  * GET TOKENS promisified
  */
 test('oauth getTokens', (assert) => {
-    assert.plan(5)
+    assert.plan(6)
 
     const { getTokens } = oauth('id', 'secret')
 
@@ -55,6 +55,7 @@ test('oauth getTokens', (assert) => {
     getTokens('code', '/redirect')
         .then((res) => {
             assert.ok(res, 'res should be parsed json object')
+            assert.equal(res.access_token, 'access', 'res.access_token should equal "access"')
         })
         .catch((err) => {
             assert.fail('promise failed unexpectedly!')
@@ -90,7 +91,7 @@ test('oauth getTokens', (assert) => {
  * REFRESH TOKENS promisified
  */
 test('oauth refreshToken', (assert) => {
-    assert.plan(5)
+    assert.plan(6)
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
@@ -110,6 +111,7 @@ test('oauth refreshToken', (assert) => {
     refreshToken('token')
         .then((res) => {
             assert.ok(res, 'body should be parsed json object')
+            assert.equal(res.access_token, 'access', 'res.access_token should equal "access"')
         })
         .catch((err) => {
             assert.fail('promise failed unexpectedly!')

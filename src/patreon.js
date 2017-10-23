@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { normalizeRequest, checkStatus, getJson } from './utils'
 
-function patreon(accessToken, config) {
+function patreon(accessToken) {
     return function (request) {
         const normalizedRequest = normalizeRequest(request)
         const url = normalizedRequest.url
