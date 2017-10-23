@@ -48,13 +48,13 @@ export default function (clientId, clientSecret) {
     }
 
     function updateToken (params, callback) {
-        const url = `https://api.patreon.com/oauth2/token`
+        const url = 'https://api.patreon.com/oauth2/token'
         const _req = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
-            body: formurlencoded.encode(params),
+            body: formurlencoded(params),
             params: params,
             credentials: 'include',
             compress: false

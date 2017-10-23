@@ -1,0 +1,57 @@
+version: 2
+
+_helpers:
+  - &node_image
+    image: circleci/node:8.2.1
+
+jobs:
+    build:
+        working_directory: ~/patreon-js
+        parallelism: 2
+        docker:
+            - *node_image
+        steps:
+            - checkout
+
+            - run:
+                name: Print debug information
+                command: |
+                  node --version
+                  npm --version
+
+            - restore_cache:
+                key: v1-patreon-js-npm-{{ checksum "package.json" }}
+
+            - run:
+                name: Install npm dependencies
+                command: |
+                    npm install
+
+            - save_cache:
+                key: v1-patreon-js-npm-{{ checksum "package.json" }}
+                paths:
+                    - node_modules
+
+            - run:
+                name: Lint
+                command: npm run lint
+
+            - run:
+                name: Test
+                command: |
+                    TESTFILES=$(circleci tests glob "tests/*.js" | circleci tests split --split-by=timings)
+                    npx babel-tape-runner ${TESTFILES} | npx tap-junit -o ./test-artifacts/test-reports
+
+            - store_test_results:
+                path: ./test-artifacts/test-reports
+
+            - store_artifacts:
+                path: ./test-artifacts
+                destination: test-artifacts
+
+
+workflows:
+    version: 2
+    primary_workflow:
+        jobs:
+            - build
