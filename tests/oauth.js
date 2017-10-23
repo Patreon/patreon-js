@@ -22,9 +22,9 @@ const mockInvalidClient = JSON.stringify({
  * INIT
  */
 test('oauth', (assert) => {
-    const { getToken, refreshToken } = oauth('id', 'secret')
+    const { getTokens, refreshToken } = oauth('id', 'secret')
 
-    assert.equal(typeof getToken, 'function', 'should return getToken function')
+    assert.equal(typeof getTokens, 'function', 'should return getTokens function')
     assert.equal(typeof refreshToken, 'function', 'should return refreshToken function')
 
     assert.end()
@@ -33,10 +33,10 @@ test('oauth', (assert) => {
 /**
  * GET TOKENS promisified
  */
-test('oauth getToken', (assert) => {
+test('oauth getTokens', (assert) => {
     assert.plan(5)
 
-    const { getToken } = oauth('id', 'secret')
+    const { getTokens } = oauth('id', 'secret')
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
@@ -52,7 +52,7 @@ test('oauth getToken', (assert) => {
             return mockTokenPayload
         })
 
-    getToken('code', '/redirect')
+    getTokens('code', '/redirect')
         .then((res) => {
             assert.ok(res, 'res should be parsed json object')
         })
@@ -64,7 +64,7 @@ test('oauth getToken', (assert) => {
         .post('/oauth2/token')
         .replyWithError('Oh geeze')
 
-    getToken('code', '/redirect')
+    getTokens('code', '/redirect')
         .then((res) => {
             assert.fail('promise passed unexpectedly!')
         })
@@ -76,7 +76,7 @@ test('oauth getToken', (assert) => {
         .post('/oauth2/token')
         .reply(200, () => { return mockInvalidGrant })
 
-    getToken('code', '/redirect')
+    getTokens('code', '/redirect')
         .then((res) => {
             assert.fail('promise passed unexpectedly!')
         })

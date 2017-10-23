@@ -49,7 +49,7 @@ function oauth(clientId, clientSecret) {
     }
 
     return {
-        getToken: (code, redirectUri) => {
+        getTokens: (code, redirectUri) => {
             return updateToken({
                 ...baseParams,
                 code,
