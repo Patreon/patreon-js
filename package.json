@@ -8,8 +8,7 @@
     "examples": "babel-node examples/server.js",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint": "eslint src/",
-    "test": "babel-tape-runner tests/**/*.js",
-    "ci": "npm run lint && npm run test"
+    "test": "babel-tape-runner tests/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +20,7 @@
   "author": "Derek Reynolds <derek@patreon.com>",
   "license": "MIT",
   "engines": {
-      "node": ">6.2.1"
+    "node": ">6.2.1"
   },
   "bugs": {
     "url": "https://github.com/patreon/patreon-js/issues"
@@ -34,7 +33,6 @@
     "verror": "^1.10.0"
   },
   "devDependencies": {
-    "json-markup": "^1.1.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
@@ -46,7 +44,9 @@
     "eslint-config-patreon": "2.0.0",
     "eslint-plugin-react": "^6.10.0",
     "express": "^4.16.2",
+    "json-markup": "^1.1.0",
     "nock": "^9.0.24",
+    "tap-junit": "^1.2.8",
     "tape": "^4.8.0"
   }
 }
