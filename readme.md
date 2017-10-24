@@ -142,10 +142,14 @@ Returns a promise representing the result of the API call.
 
 `pathname` API resource path like `/current_user`.
 
-The promise will be resolved with a JSON body if successful,
-or will reject with an error otherwise.
-The JSON body will be in the [json:api](http://jsonapi.org)
-format.
+If the API call is successful, the promise will resolve with an object containing three pieces:
+* `store`: a [JsonApiDataStore](https://github.com/beauby/jsonapi-datastore). This provides a nice, usable wrapper around the raw [JSON:API response](http://jsonapi.org) to easily access related resources and resource attributes.
+* `rawJson`: a JSON object in the [JSON:API](http://jsonapi.org)
+format, for advanced custom usage (say, parsing into your own JSON:API data store)
+* `response`: the actual [`fetch` `Response` object](https://developer.mozilla.org/en-US/docs/Web/API/Response), for the lowest level of response analysis
+
+If the API call is unsuccessful, the promise will reject with an error.
+
 
 
 ## API Resources
