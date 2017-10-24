@@ -6,7 +6,7 @@ function stripPreSlash(str) {
 }
 
 function normalizeRequest(request) {
-    return (typeof request === 'string')
+    return typeof request === 'string'
         ? {
             url: `${BASE_HOST}/${BASE_PATH}/${stripPreSlash(request)}`,
             method: 'GET'
@@ -18,7 +18,7 @@ function normalizeRequest(request) {
 }
 
 function checkStatus(response) {
-    return (response.status >= 200 && response.status < 300)
+    return response.status >= 200 && response.status < 300
         ? Promise.resolve(response)
         : Promise.reject(response)
 }

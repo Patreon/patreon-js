@@ -65,8 +65,5 @@ export default {
         constants.attributes.created,
         constants.attributes.url
     ],
-    default_relationships: [
-        constants.relationships.campaign,
-        constants.relationships.pledges
-    ]
+    default_relationships: [constants.relationships.campaign, constants.relationships.pledges]
 }

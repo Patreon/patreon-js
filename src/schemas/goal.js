@@ -6,8 +6,7 @@ const constants = {
         created_at: 'created_at',
         reached_at: 'reached_at'
     },
-    relationships: {
-    }
+    relationships: {}
 }
 
 export default {
@@ -19,6 +18,5 @@ export default {
         constants.attributes.created_at,
         constants.attributes.reached_at
     ],
-    default_relationships: [
-    ]
+    default_relationships: []
 }

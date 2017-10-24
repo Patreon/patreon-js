@@ -26,7 +26,5 @@ export default {
         constants.attributes.url,
         constants.attributes.patron_count
     ],
-    default_relationships: [
-        constants.relationships.creator
-    ]
+    default_relationships: [constants.relationships.creator]
 }

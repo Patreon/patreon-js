@@ -29,7 +29,7 @@ function updateToken(params) {
         .then(checkStatus)
         .then(getJson)
         .then(json => {
-            return (json.error)
+            return json.error
                 ? Promise.reject({
                     message: errMap(json.error, params),
                     body: json,
@@ -57,7 +57,7 @@ function oauth(clientId, clientSecret) {
                 redirect_uri: redirectUri
             })
         },
-        refreshToken: (token) => {
+        refreshToken: token => {
             return updateToken({
                 ...baseParams,
                 refresh_token: token,

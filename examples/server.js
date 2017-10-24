@@ -40,19 +40,20 @@ app.get('/oauth/redirect', (req, res) => {
     const { code } = req.query
     let token
 
-    return oauthClient.getToken(code, redirect)
+    return oauthClient
+        .getToken(code, redirect)
         .then(({ access_token }) => {
             token = access_token // eslint-disable-line camelcase
             const apiClient = patreon(token)
             return apiClient('/current_user')
         })
-        .then((user) => {
+        .then(user => {
             const { id } = user.data
             database[id] = { ...user.data, token }
             console.log(`Saved user ${user.data.attributes.full_name} to the database`)
             return res.redirect(`/protected/${id}`)
         })
-        .catch((err) => {
+        .catch(err => {
             console.log(err)
             console.log('Redirecting to login')
             res.redirect('/')
@@ -71,16 +72,15 @@ app.get('/protected/:id', (req, res) => {
     const apiClient = patreon(user.token)
 
     // make api requests concurrently
-    return Promise.all([
-        apiClient('/current_user/campaigns')
-    ])
+    return Promise.all([apiClient('/current_user/campaigns')])
         .then(([campaigns]) => {
             const page = oauthExampleTpl({
                 name: user.attributes.first_name,
                 campaigns
             })
             return res.send(page)
-        }).catch((err) => {
+        })
+        .catch(err => {
             const { status, statusText } = err
             console.log('Failed to retrieve campaign info')
             console.log(err)
