@@ -16,10 +16,10 @@ const encodeParams = (params) => {
     if (!params) return ''
     return Object.keys(params).reduce((memo, key) =>
         `${memo}${encodeParam(params[key], key)}`
-    , '')
+        , '')
 }
 
-export default function(url, _params) {
+function jsonApiURL(url, _params) {
     const separator = url.includes('?') ? '&' : '?'
 
     const params = _params
@@ -28,3 +28,5 @@ export default function(url, _params) {
 
     return `${url}${separator}${params}`
 }
+
+export default jsonApiURL

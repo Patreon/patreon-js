@@ -43,18 +43,18 @@ var redirectURL = 'http://mypatreonapp.com/oauth/redirect'
 function handleOAuthRedirectRequest(request, response) {
     var oauthGrantCode = url.parse(request.url, true).query.code
 
-    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL, function (tokensError, tokens) {
-        var patreonAPIClient = patreonAPI(tokens.access_token)
-
-        patreonAPIClient(`/current_user`, function (currentUserError, apiResponse) {
-            if (currentUserError) {
-                console.error(currentUserError)
-                response.end(currentUserError)
-            }
-
+    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL)
+        .then(function(tokensResponse) {
+            var patreonAPIClient = patreonAPI(tokensResponse.access_token)
+            return patreonAPIClient(`/current_user`)
+        })
+        .then(function(currentUserResponse) {
             response.end(apiResponse)
         })
-    })
+        .catch(function(err) {
+            console.error('error!', err)
+            response.end(err)
+        })
 }
 ```
 
@@ -73,18 +73,18 @@ const redirectURL = 'http://mypatreonapp.com/oauth/redirect'
 function handleOAuthRedirectRequest(request, response) {
     const oauthGrantCode = url.parse(request.url, true).query.code
 
-    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL, (tokensError, { access_token }) => {
-        const patreonAPIClient = patreonAPI(access_token)
-
-        patreonAPIClient(`/current_user`, (currentUserError, apiResponse) => {
-            if (currentUserError) {
-                console.error(currentUserError)
-                response.end(currentUserError)
-            }
-
-            response.end(apiResponse);
+    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL)
+        .then(tokensResponse => {
+            const patreonAPIClient = patreonAPI(tokensResponse.access_token)
+            return patreonAPIClient(`/current_user`)
         })
-    })
+        .then(currentUserResponse => {
+            response.end(apiResponse)
+        })
+        .catch(err => {
+            console.error('error!', err)
+            response.end(err)
+        })
 })
 ```
 
@@ -93,28 +93,30 @@ You can also reference the included [server example](/examples/server.js).
 
 ## Methods
 
-### var pTokens = oauth(clientId, clientSecret)
+### var patreonOAuthClient = oauth(clientId, clientSecret)
 
 Returns an object containing functions for fetching OAuth access tokens.
 
 `clientId` The client id you received after setting up your OAuth account.  
 `clientSecret` The client secret you received after setting up your OAuth account.
 
-### pTokens.getTokens(redirectCode, redirectUri, callback(err, tokens, res))
+### patreonOAuthClient.getTokens(redirectCode, redirectUri)
 
-This makes a request to grab tokens needed for making API requests.
+This makes a request to grab tokens needed for making API requests, and returns a promise.
 
 `redirectCode` Use the `code` query param provided to your OAauth redirect route.  
-`redirectUri` This should be the same redirect route you provided in the initial auth request.  
-`callback` Called with an `err` if there is one, a `tokens` object and the response object `res` for any inspection.
+`redirectUri` This should be the same redirect route you provided in the initial auth request.
+
+The promise will be resolved with the parsed JSON containing a `tokens` response object,
+or will be rejected with an error message.
 
 The `tokens` object will look something like this:
 
 ```js
 {
-    access_token: 'pppp',
-    refresh_token: 'pppp',
-    expires_in: 'pppp',
+    access_token: 'access_token',
+    refresh_token: 'refresh_token',
+    expires_in: 'time_window',
     scope: 'users pledges-to-me my-campaign',
     token_type: 'Bearer'
 }
@@ -126,11 +128,16 @@ You must pass `tokens.access_token` in to `patreon` for making API calls.
 
 Returns a function for making authenticated API calls.
 
-### client(pathname, callback(err, body))
+### client(pathname)
+
+Returns a promise representing the result of the API call.
 
 `pathname` API resource path like `/current_user`.
-`callback` Called with an `err` if there is one, `body` is the [json:api](http://jsonapi.org)
-response for the resource.
+
+The promise will be resolved with a JSON body if successful,
+or will reject with an error otherwise.
+The JSON body will be in the [json:api](http://jsonapi.org)
+format.
 
 
 ## API Resources
@@ -150,6 +157,9 @@ The lists of valid `includes` and `fields` arguments are provided in `patreon/sc
 For instance, if you wanted to request the total amount a patron has ever paid to your campaign,
 which is not included by default, you could do:
 ```js
+const { patreonAPI, jsonApiURL } = require('patreon')
+const pledge_schema = require('patreon/schemas/pledge')
+
 const patreonAPIClient = patreonAPI(access_token)
 const url = jsonApiURL(`/current_user`, {
   fields: {

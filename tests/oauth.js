@@ -10,6 +10,14 @@ const mockTokenPayload = JSON.stringify({
     token_type: 'Bearer'
 })
 
+const mockInvalidGrant = JSON.stringify({
+    error: 'invalid_grant'
+})
+
+const mockInvalidClient = JSON.stringify({
+    error: 'invalid_client'
+})
+
 /**
  * INIT
  */
@@ -23,10 +31,12 @@ test('oauth', (assert) => {
 })
 
 /**
- * GET TOKENS
+ * GET TOKENS promisified
  */
 test('oauth getTokens', (assert) => {
-    assert.plan(5)
+    assert.plan(6)
+
+    const { getTokens } = oauth('id', 'secret')
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
@@ -42,28 +52,46 @@ test('oauth getTokens', (assert) => {
             return mockTokenPayload
         })
 
-    const { getTokens } = oauth('id', 'secret')
-
-    getTokens('code', '/redirect', function (err, body) {
-        assert.equal(err, null, 'err should be null')
-        assert.ok(body.access_token, 'body should be parsed json object')
-    })
+    getTokens('code', '/redirect')
+        .then((res) => {
+            assert.ok(res, 'res should be parsed json object')
+            assert.equal(res.access_token, 'access', 'res.access_token should equal "access"')
+        })
+        .catch((err) => {
+            assert.fail('promise failed unexpectedly!')
+        })
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
         .replyWithError('Oh geeze')
 
-    getTokens('code', '/redirect', function (err, body) {
-        assert.notEqual(err, null, 'err should not be null')
-        assert.equal(typeof body, 'undefined', 'body should be undefined if err')
-    })
+    getTokens('code', '/redirect')
+        .then((res) => {
+            assert.fail('promise passed unexpectedly!')
+        })
+        .catch((err) => {
+            assert.notEqual(err, null, 'err should not be null')
+        })
+
+    nock('https://api.patreon.com')
+        .post('/oauth2/token')
+        .reply(200, () => { return mockInvalidGrant })
+
+    getTokens('code', '/redirect')
+        .then((res) => {
+            assert.fail('promise passed unexpectedly!')
+        })
+        .catch((err) => {
+            assert.notEqual(err, null, 'err should not be null')
+            assert.equal(err.message, 'Invalid grant_type: authorization_code', 'err message should include grant type')
+        })
 })
 
 /**
- * REFRESH TOKENS
+ * REFRESH TOKENS promisified
  */
 test('oauth refreshToken', (assert) => {
-    assert.plan(5)
+    assert.plan(6)
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
@@ -80,17 +108,37 @@ test('oauth refreshToken', (assert) => {
 
     const { refreshToken } = oauth('id', 'secret')
 
-    refreshToken('token', function (err, body) {
-        assert.equal(err, null, 'err should be null')
-        assert.ok(body.refresh_token, 'body should be parsed json object')
-    })
+    refreshToken('token')
+        .then((res) => {
+            assert.ok(res, 'body should be parsed json object')
+            assert.equal(res.access_token, 'access', 'res.access_token should equal "access"')
+        })
+        .catch((err) => {
+            assert.fail('promise failed unexpectedly!')
+        })
 
     nock('https://api.patreon.com')
         .post('/oauth2/token')
         .replyWithError('Oh geeze')
 
-    refreshToken('token', function (err, body) {
-        assert.notEqual(err, null, 'err should not be null')
-        assert.equal(typeof body, 'undefined', 'body should be undefined if err')
-    })
+    refreshToken('token')
+        .then((res) => {
+            assert.fail('promise passed unexpectedly!')
+        })
+        .catch((err) => {
+            assert.notEqual(err, null, 'err should not be null')
+        })
+
+    nock('https://api.patreon.com')
+        .post('/oauth2/token')
+        .reply(200, () => { return mockInvalidClient })
+
+    refreshToken('token')
+        .then((res) => {
+            assert.fail('promise passed unexpectedly!')
+        })
+        .catch((err) => {
+            assert.notEqual(err, null, 'err should not be null')
+            assert.equal(err.message, 'Invalid client_id: id', 'err message should client id')
+        })
 })
