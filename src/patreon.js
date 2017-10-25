@@ -1,23 +1,42 @@
 import fetch from 'isomorphic-fetch'
+import { JsonApiDataStore } from 'jsonapi-datastore'
 import { normalizeRequest, checkStatus, getJson } from './utils'
 
 function patreon(accessToken) {
-    return function (request) {
-        const normalizedRequest = normalizeRequest(request)
+    let store = new JsonApiDataStore()
+
+    const makeRequest = requestSpec => {
+        const normalizedRequest = normalizeRequest(requestSpec)
         const url = normalizedRequest.url
         const options = {
             ...normalizedRequest,
-            headers: { 'Authorization': `Bearer ${accessToken}` },
+            headers: { Authorization: `Bearer ${accessToken}` },
             credentials: 'include'
         }
+        let _response = undefined
 
         return fetch(url, options)
-            .then(checkStatus)
+            .then(response => {
+                _response = response
+                return checkStatus(response)
+            })
             .then(getJson)
-            .catch(err => {
-                return Promise.reject(err)
+            .then(rawJson => {
+                store.sync(rawJson)
+                return { store, rawJson, response: _response }
+            })
+            .catch(error => {
+                return Promise.reject({ error, response: _response })
             })
     }
+
+    makeRequest.getStore = () => store
+
+    makeRequest.setStore = newStore => {
+        store = newStore
+    }
+
+    return makeRequest
 }
 
 export default patreon

@@ -43,19 +43,24 @@ var redirectURL = 'http://mypatreonapp.com/oauth/redirect'
 function handleOAuthRedirectRequest(request, response) {
     var oauthGrantCode = url.parse(request.url, true).query.code
 
-    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL)
+    patreonOAuthClient
+        .getTokens(oauthGrantCode, redirectURL)
         .then(function(tokensResponse) {
             var patreonAPIClient = patreonAPI(tokensResponse.access_token)
-            return patreonAPIClient(`/current_user`)
+            return patreonAPIClient('/current_user')
         })
-        .then(function(currentUserResponse) {
-            response.end(apiResponse)
+        .then(function(result) {
+            var store = result.store
+            // store is a [JsonApiDataStore](https://github.com/beauby/jsonapi-datastore)
+            // You can also ask for result.rawJson if you'd like to work with unparsed data
+            response.end(store.findAll('user').map(user => user.serialize()))
         })
         .catch(function(err) {
             console.error('error!', err)
             response.end(err)
         })
 }
+
 ```
 
 If you're using [babel](https://babeljs.io) or writing [es2015](https://babeljs.io/docs/learn-es2015/) code:
@@ -73,19 +78,22 @@ const redirectURL = 'http://mypatreonapp.com/oauth/redirect'
 function handleOAuthRedirectRequest(request, response) {
     const oauthGrantCode = url.parse(request.url, true).query.code
 
-    patreonOAuthClient.getTokens(oauthGrantCode, redirectURL)
+    patreonOAuthClient
+        .getTokens(oauthGrantCode, redirectURL)
         .then(tokensResponse => {
             const patreonAPIClient = patreonAPI(tokensResponse.access_token)
-            return patreonAPIClient(`/current_user`)
+            return patreonAPIClient('/current_user')
         })
-        .then(currentUserResponse => {
-            response.end(apiResponse)
+        .then(({ store }) => {
+            // store is a [JsonApiDataStore](https://github.com/beauby/jsonapi-datastore)
+            // You can also ask for result.rawJson if you'd like to work with unparsed data
+            response.end(store.findAll('user').map(user => user.serialize()))
         })
         .catch(err => {
             console.error('error!', err)
             response.end(err)
         })
-})
+}
 ```
 
 You can also reference the included [server example](/examples/server.js).
@@ -134,10 +142,14 @@ Returns a promise representing the result of the API call.
 
 `pathname` API resource path like `/current_user`.
 
-The promise will be resolved with a JSON body if successful,
-or will reject with an error otherwise.
-The JSON body will be in the [json:api](http://jsonapi.org)
-format.
+If the API call is successful, the promise will resolve with an object containing three pieces:
+* `store`: a [JsonApiDataStore](https://github.com/beauby/jsonapi-datastore). This provides a nice, usable wrapper around the raw [JSON:API response](http://jsonapi.org) to easily access related resources and resource attributes.
+* `rawJson`: a JSON object in the [JSON:API](http://jsonapi.org)
+format, for advanced custom usage (say, parsing into your own JSON:API data store)
+* `response`: the actual [`fetch` `Response` object](https://developer.mozilla.org/en-US/docs/Web/API/Response), for the lowest level of response analysis
+
+If the API call is unsuccessful, the promise will reject with an error.
+
 
 
 ## API Resources
