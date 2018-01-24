@@ -38,7 +38,7 @@ test('oauth getTokens', (assert) => {
 
     const { getTokens } = oauth('id', 'secret')
 
-    nock('https://api.patreon.com')
+    nock('https://www.patreon.com/api')
         .post('/oauth2/token')
         .reply(200, function (uri, body) {
             const params = (
@@ -61,7 +61,7 @@ test('oauth getTokens', (assert) => {
             assert.fail('promise failed unexpectedly!')
         })
 
-    nock('https://api.patreon.com')
+    nock('https://www.patreon.com/api')
         .post('/oauth2/token')
         .replyWithError('Oh geeze')
 
@@ -73,7 +73,7 @@ test('oauth getTokens', (assert) => {
             assert.notEqual(err, null, 'err should not be null')
         })
 
-    nock('https://api.patreon.com')
+    nock('https://www.patreon.com/api/')
         .post('/oauth2/token')
         .reply(200, () => { return mockInvalidGrant })
 
@@ -93,7 +93,7 @@ test('oauth getTokens', (assert) => {
 test('oauth refreshToken', (assert) => {
     assert.plan(6)
 
-    nock('https://api.patreon.com')
+    nock('https://www.patreon.com/api')
         .post('/oauth2/token')
         .reply(200, function (uri, body) {
             const params = (
@@ -117,7 +117,7 @@ test('oauth refreshToken', (assert) => {
             assert.fail('promise failed unexpectedly!')
         })
 
-    nock('https://api.patreon.com')
+    nock('https://www.patreon.com/api')
         .post('/oauth2/token')
         .replyWithError('Oh geeze')
 
@@ -129,7 +129,7 @@ test('oauth refreshToken', (assert) => {
             assert.notEqual(err, null, 'err should not be null')
         })
 
-    nock('https://api.patreon.com')
+    nock('https://www.patreon.com/api')
         .post('/oauth2/token')
         .reply(200, () => { return mockInvalidClient })
 

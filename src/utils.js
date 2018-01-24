@@ -1,5 +1,8 @@
-const BASE_HOST = 'https://api.patreon.com'
-const BASE_PATH = 'oauth2/api'
+import { version } from '../package.json'
+const os = require('os')
+
+const BASE_HOST = 'https://www.patreon.com'
+const BASE_PATH = 'api/oauth2/api'
 
 function stripPreSlash(str) {
     return str.replace(/^\//, '')
@@ -27,4 +30,8 @@ function getJson(response) {
     return response.json()
 }
 
-export { stripPreSlash, normalizeRequest, checkStatus, getJson }
+function userAgentString() {
+    return `Patreon-JS, version ${version}, platform ${os.platform()}-${os.release()}-${os.arch()}`
+}
+
+export { stripPreSlash, normalizeRequest, checkStatus, getJson, userAgentString }
