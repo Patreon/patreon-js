@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch'
 import { JsonApiDataStore } from 'jsonapi-datastore'
-import { normalizeRequest, checkStatus, getJson } from './utils'
+import { normalizeRequest, checkStatus, getJson, userAgentString } from './utils'
 
 function patreon(accessToken) {
     let store = new JsonApiDataStore()
@@ -10,7 +10,10 @@ function patreon(accessToken) {
         const url = normalizedRequest.url
         const options = {
             ...normalizedRequest,
-            headers: { Authorization: `Bearer ${accessToken}` },
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'User-Agent': userAgentString()
+            },
             credentials: 'include'
         }
         let _response = undefined

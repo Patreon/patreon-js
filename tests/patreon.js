@@ -5,7 +5,7 @@ import patreon from '../src/patreon'
 test('patreon', (assert) => {
     assert.plan(8)
 
-    nock('https://api.patreon.com')
+    nock('https://www.patreon.com/api')
         .get('/oauth2/api/current_user')
         .reply(200, function (uri, body) {
             assert.ok(
@@ -58,7 +58,7 @@ test('patreon', (assert) => {
             assert.fail(err, 'promise failed unexpectedly!')
         })
 
-    nock('https://api.patreon.com')
+    nock('https://www.patreon.com/api')
         .get('/oauth2/api/current_user')
         .replyWithError('Oh geeze')
 
