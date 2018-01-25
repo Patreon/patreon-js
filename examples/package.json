@@ -1,0 +1,15 @@
+{
+  "name": "patreon-examples",
+  "version": "0.0.1",
+  "description": "Test package for using the Patreon JS client library",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Patreon",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "patreon": "^0.3.0"
+  }
+}
