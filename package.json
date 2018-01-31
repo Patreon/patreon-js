@@ -1,6 +1,6 @@
 {
   "name": "patreon",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Use the Patreon API via OAuth.",
   "main": "dist/index.js",
   "scripts": {
@@ -17,7 +17,7 @@
   "keywords": [
     "patreon"
   ],
-  "author": "Derek Reynolds <derek@patreon.com>",
+  "author": "Patreon <platform-team@patreon.com>",
   "license": "MIT",
   "engines": {
     "node": ">6.2.1"

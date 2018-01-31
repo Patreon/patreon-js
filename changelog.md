@@ -1,4 +1,4 @@
-# 0.4.0 (in-progress)
+# 0.4.0
 
 * Improve README to better explain responses
 * Use JSONAPIStore for response
