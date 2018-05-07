@@ -29,7 +29,7 @@ your OAuth account or otherwise suggested by the inline comments.
 ```js
 var url = require('url')
 var patreon = require('patreon')
-var patreonAPI = patreon.default
+var patreonAPI = patreon.patreon
 var patreonOAuth = patreon.oauth
 
 // Use the client id and secret you received when setting up your OAuth account
@@ -67,7 +67,7 @@ If you're using [babel](https://babeljs.io) or writing [es2015](https://babeljs.
 
 ```js
 import url from 'url'
-import patreonAPI, { oauth as patreonOAuth } from 'patreon'
+import { patreon as patreonAPI , oauth as patreonOAuth } from 'patreon'
 
 const CLIENT_ID = 'pppp'
 const CLIENT_SECRET = 'pppp'
@@ -105,14 +105,14 @@ You can also reference the included [server example](/examples/server.js).
 
 Returns an object containing functions for fetching OAuth access tokens.
 
-`clientId` The client id you received after setting up your OAuth account.  
+`clientId` The client id you received after setting up your OAuth account.
 `clientSecret` The client secret you received after setting up your OAuth account.
 
 ### patreonOAuthClient.getTokens(redirectCode, redirectUri)
 
 This makes a request to grab tokens needed for making API requests, and returns a promise.
 
-`redirectCode` Use the `code` query param provided to your OAauth redirect route.  
+`redirectCode` Use the `code` query param provided to your OAauth redirect route.
 `redirectUri` This should be the same redirect route you provided in the initial auth request.
 
 The promise will be resolved with the parsed JSON containing a `tokens` response object,
@@ -156,7 +156,7 @@ If the API call is unsuccessful, the promise will reject with an error.
 
 ### Routes
 
-`/current_user`  
+`/current_user`
 `/current_user/campaigns`
 `/campaigns/${campaign_id}/pledges`
 
