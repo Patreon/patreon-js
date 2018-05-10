@@ -1,6 +1,6 @@
 {
   "name": "patreon",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Use the Patreon API via OAuth.",
   "main": "dist/index.js",
   "scripts": {
@@ -30,8 +30,7 @@
     "form-urlencoded": "^2.0.4",
     "is-plain-object": "^2.0.4",
     "isomorphic-fetch": "^2.2.1",
-    "jsonapi-datastore": "^0.4.0-beta",
-    "verror": "^1.10.0"
+    "jsonapi-datastore": "^0.4.0-beta"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

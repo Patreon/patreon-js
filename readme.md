@@ -169,10 +169,10 @@ The lists of valid `includes` and `fields` arguments are provided in `patreon/sc
 For instance, if you wanted to request the total amount a patron has ever paid to your campaign,
 which is not included by default, you could do:
 ```js
-const { patreonAPI, jsonApiURL } = require('patreon')
+const { patreon, jsonApiURL } = require('patreon')
 const pledge_schema = require('patreon/schemas/pledge')
 
-const patreonAPIClient = patreonAPI(access_token)
+const patreonAPIClient = patreon(access_token)
 const url = jsonApiURL(`/current_user`, {
   fields: {
     pledge: [...pledge_schema.default_attributes, pledge_schema.attributes.total_historical_amount_cents]
