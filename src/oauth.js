@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch'
 import formurlencoded from 'form-urlencoded'
-import { checkStatus, getJson, userAgentString } from './utils'
+import { buildUrl, checkStatus, getJson, userAgentString } from './utils'
 
 function errMap(err, params) {
     if (err === 'invalid_grant') {
@@ -13,7 +13,7 @@ function errMap(err, params) {
 }
 
 function updateToken(params) {
-    const url = 'https://www.patreon.com/api/oauth2/token'
+    const url = buildUrl('/api/oauth2/token')
     const options = {
         method: 'POST',
         headers: {

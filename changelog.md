@@ -1,5 +1,9 @@
 # 0.4.1
 
+## Added
+
+* Allow override of patreon base URL via environment variable (for internal testing)
+
 ## Fixed
 
 * Corrected errors in README
