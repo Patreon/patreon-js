@@ -1,3 +1,14 @@
+# 0.4.1
+
+## Fixed
+
+* Corrected errors in README
+* Fixed errors in examples/package.json, so npm install will work properly there
+
+## Updated
+
+* Removed unused dependencies
+
 # 0.4.0
 
 * Improve README to better explain responses
