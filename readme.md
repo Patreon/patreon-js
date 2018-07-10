@@ -180,3 +180,22 @@ const url = jsonApiURL(`/current_user`, {
 })
 patreonAPIClient(url, callback)
 ```
+
+## Errata
+
+### Having additional scopes
+
+The Patreon JS library uses a data store pattern for storing inflated objects from the returned results of API calls. In some cases, especially if you have been granted the scopes for being a multi-campaign client or are opted-in to some API beta programs, the JS client calling `/current_user` will fetch the current user's campaign, as well as all the patron users connected to that campaign.
+
+This can result in the user store in the JS library having a larger list of users than expected for a call to `/current_user`, but the current user's `user` object will be in that list.
+
+Example for finding the actual current user:
+
+```
+var patreon_response = patreon_client('/current_user').then(function(result) {
+    user_store = result.store
+    let data = result.rawJson
+    const myUserId = data.data.id
+    creator = user_store.find('user', myUserId)
+}
+```
