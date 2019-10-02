@@ -1,3 +1,5 @@
+> **Important: This libary only supports the v1 Patreon API endpoints. The v2 is currently in beta, [see what's changed](https://docs.patreon.com/#apiv2-oauth).**
+
 # patreon-js
 
 [![Build State](https://img.shields.io/circleci/project/Patreon/patreon-js.svg?style=flat)](https://circleci.com/gh/Patreon/patreon-js)
