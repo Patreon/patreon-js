@@ -1,7 +1,6 @@
 import { oauth, patreon } from '../dist/index.js'
 
 import express from 'express'
-import { format as formatUrl } from 'url'
 import jsonMarkup from 'json-markup'
 import fs from 'fs'
 
@@ -20,19 +19,9 @@ const oauthClient = oauth(clientId, clientSecret)
 let database = {}
 
 
-const loginUrl = formatUrl({
-    protocol: 'https',
-    host: 'patreon.com',
-    pathname: '/oauth2/authorize',
-    query: {
-        response_type: 'code',
-        client_id: clientId,
-        redirect_uri: redirect,
-        state: 'chill'
-    }
-})
+const loginUrl = new URL(`https://patreon.com/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect}&state=chill`)
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
     res.send(`<a href="${loginUrl}">Login with Patreon</a>`)
 })
 

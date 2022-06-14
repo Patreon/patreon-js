@@ -1,6 +1,6 @@
 # patreon-js
 
-[![Build State](https://img.shields.io/circleci/project/Patreon/patreon-js.svg?style=flat)](https://circleci.com/gh/Patreon/patreon-js)
+[![Build State](https://img.shields.io/circleci/build/gh/Patreon/patreon-js.svg?style=flat)](https://app.circleci.com/pipelines/github/Patreon/patreon-js)
 
 Use the Patreon API via OAuth.
 
@@ -9,7 +9,7 @@ Use the Patreon API via OAuth.
 
 You'll need to register an OAuth client account to receive a `client_id`, `client_secret` and other info for use with this module.
 
-Visit the [OAuth Documentation Page](https://www.patreon.com/oauth2/documentation) **while logged in as a Patreon creator on patreon.com** to register your client.
+Visit the [OAuth Documentation Page](https://docs.patreon.com/#oauth) **while logged in as a Patreon creator on patreon.com** to register your client.
 
 
 ## Installation
@@ -63,7 +63,7 @@ function handleOAuthRedirectRequest(request, response) {
 
 ```
 
-If you're using [babel](https://babeljs.io) or writing [es2015](https://babeljs.io/docs/learn-es2015/) code:
+If you're using [babel](https://babeljs.io) or writing [es2015](https://babeljs.io/docs/en/learn) code:
 
 ```js
 import url from 'url'
@@ -143,8 +143,8 @@ Returns a promise representing the result of the API call.
 `pathname` API resource path like `/current_user`.
 
 If the API call is successful, the promise will resolve with an object containing three pieces:
-* `store`: a [JsonApiDataStore](https://github.com/beauby/jsonapi-datastore). This provides a nice, usable wrapper around the raw [JSON:API response](http://jsonapi.org) to easily access related resources and resource attributes.
-* `rawJson`: a JSON object in the [JSON:API](http://jsonapi.org)
+* `store`: a [JsonApiDataStore](https://github.com/beauby/jsonapi-datastore). This provides a nice, usable wrapper around the raw [JSON:API response](https://jsonapi.org) to easily access related resources and resource attributes.
+* `rawJson`: a JSON object in the [JSON:API](https://jsonapi.org)
 format, for advanced custom usage (say, parsing into your own JSON:API data store)
 * `response`: the actual [`fetch` `Response` object](https://developer.mozilla.org/en-US/docs/Web/API/Response), for the lowest level of response analysis
 
@@ -162,9 +162,9 @@ If the API call is unsuccessful, the promise will reject with an error.
 
 ### Response Format
 
-You can request specific [related resources](http://jsonapi.org/format/#fetching-includes)
-and or [resource attributes](http://jsonapi.org/format/#fetching-sparse-fieldsets)
-that you want returned by our API, as per the [JSON:API specification](http://jsonapi.org/).
+You can request specific [related resources](https://jsonapi.org/format/#fetching-includes)
+and or [resource attributes](https://jsonapi.org/format/#fetching-sparse-fieldsets)
+that you want returned by our API, as per the [JSON:API specification](https://jsonapi.org).
 The lists of valid `includes` and `fields` arguments are provided in `patreon/schemas`.
 For instance, if you wanted to request the total amount a patron has ever paid to your campaign,
 which is not included by default, you could do:
@@ -191,11 +191,11 @@ This can result in the user store in the JS library having a larger list of user
 
 Example for finding the actual current user:
 
-```
+```js
 var patreon_response = patreon_client('/current_user').then(function(result) {
     user_store = result.store
     let data = result.rawJson
     const myUserId = data.data.id
     creator = user_store.find('user', myUserId)
-}
+})
 ```

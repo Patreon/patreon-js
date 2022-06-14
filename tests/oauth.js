@@ -40,7 +40,7 @@ test('oauth getTokens', (assert) => {
 
     nock('https://www.patreon.com/api')
         .post('/oauth2/token')
-        .reply(200, function (uri, body) {
+        .reply(200, function (_uri, body) {
             const params = (
                 'client_id=id&client_secret=secret' +
                 '&code=code&grant_type=authorization_code' +
@@ -57,7 +57,7 @@ test('oauth getTokens', (assert) => {
             assert.ok(res, 'res should be parsed json object')
             assert.equal(res.access_token, 'access', 'res.access_token should equal "access"')
         })
-        .catch((err) => {
+        .catch(() => {
             assert.fail('promise failed unexpectedly!')
         })
 
@@ -66,7 +66,7 @@ test('oauth getTokens', (assert) => {
         .replyWithError('Oh geeze')
 
     getTokens('code', '/redirect')
-        .then((res) => {
+        .then(() => {
             assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {
@@ -78,7 +78,7 @@ test('oauth getTokens', (assert) => {
         .reply(200, () => { return mockInvalidGrant })
 
     getTokens('code', '/redirect')
-        .then((res) => {
+        .then(() => {
             assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {
@@ -95,7 +95,7 @@ test('oauth refreshToken', (assert) => {
 
     nock('https://www.patreon.com/api')
         .post('/oauth2/token')
-        .reply(200, function (uri, body) {
+        .reply(200, function (_uri, body) {
             const params = (
                 'client_id=id&client_secret=secret&' +
                 'refresh_token=token&grant_type=refresh_token'
@@ -113,7 +113,7 @@ test('oauth refreshToken', (assert) => {
             assert.ok(res, 'body should be parsed json object')
             assert.equal(res.access_token, 'access', 'res.access_token should equal "access"')
         })
-        .catch((err) => {
+        .catch(() => {
             assert.fail('promise failed unexpectedly!')
         })
 
@@ -122,7 +122,7 @@ test('oauth refreshToken', (assert) => {
         .replyWithError('Oh geeze')
 
     refreshToken('token')
-        .then((res) => {
+        .then(() => {
             assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {
@@ -134,7 +134,7 @@ test('oauth refreshToken', (assert) => {
         .reply(200, () => { return mockInvalidClient })
 
     refreshToken('token')
-        .then((res) => {
+        .then(() => {
             assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {
