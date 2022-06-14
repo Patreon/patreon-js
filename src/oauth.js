@@ -12,7 +12,7 @@ function errMap(err, params) {
     }
 }
 
-function updateToken(params) {
+async function updateToken(params) {
     const url = buildUrl('/api/oauth2/token')
     const options = {
         method: 'POST',
@@ -26,21 +26,20 @@ function updateToken(params) {
         compress: false
     }
 
-    return fetch(url, options)
-        .then(checkStatus)
-        .then(getJson)
-        .then(json => {
-            return (json.error)
-                ? Promise.reject({
-                    message: errMap(json.error, params),
-                    body: json,
-                    params
-                })
-                : Promise.resolve(json)
-        })
-        .catch(err => {
-            return Promise.reject(err)
-        })
+    try {
+        const response = await fetch(url, options)
+        const status = await checkStatus(response)
+        const json = await getJson(status)
+        return await ((json.error)
+            ? Promise.reject({
+                message: errMap(json.error, params),
+                body: json,
+                params
+            })
+            : Promise.resolve(json))
+    } catch (err) {
+        return await Promise.reject(err)
+    }
 }
 
 function oauth(clientId, clientSecret) {

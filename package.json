@@ -27,26 +27,26 @@
   },
   "homepage": "https://github.com/patreon/patreon-js#readme",
   "dependencies": {
-    "form-urlencoded": "^2.0.4",
-    "is-plain-object": "^2.0.4",
-    "isomorphic-fetch": "^2.2.1",
+    "form-urlencoded": "^6.0.6",
+    "is-plain-object": "^5.0.0",
+    "isomorphic-fetch": "^3.0.0",
     "jsonapi-datastore": "^0.4.0-beta"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "babel-tape-runner": "^2.0.1",
-    "es6-promise": "^3.0.2",
-    "eslint": "^3.16.1",
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.5",
+    "@babel/eslint-parser": "^7.18.2",
+    "@babel/node": "^7.18.5",
+    "@babel/plugin-proposal-function-sent": "^7.18.2",
+    "@babel/plugin-proposal-throw-expressions": "^7.16.7",
+    "@babel/preset-env": "^7.18.2",
+    "babel-tape-runner": "^3.0.0",
+    "eslint": "^8.17.0",
     "eslint-config-patreon": "2.0.0",
-    "eslint-plugin-react": "^6.10.0",
-    "express": "^4.16.2",
-    "json-markup": "^1.1.0",
-    "nock": "^9.0.24",
-    "tap-junit": "^1.2.8",
-    "tape": "^4.8.0"
+    "express": "^4.18.1",
+    "json-markup": "^1.1.3",
+    "nock": "^13.2.6",
+    "tap-junit": "^5.0.2",
+    "tape": "^5.5.3"
   }
 }

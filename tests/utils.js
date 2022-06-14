@@ -51,7 +51,7 @@ test('checkStatus', (assert) => {
                 key: 'value'
             }, 'properly formatted json should resolve the json')
         })
-        .catch((err) => {
+        .catch(() => {
             assert.fail('promise failed unexpectedly!')
         })
 
@@ -60,7 +60,7 @@ test('checkStatus', (assert) => {
         key: 'value'
     }
     checkStatus(badResponse)
-        .then((res) => {
+        .then(() => {
             assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {

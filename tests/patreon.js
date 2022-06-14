@@ -7,7 +7,7 @@ test('patreon', (assert) => {
 
     nock('https://www.patreon.com/api')
         .get('/oauth2/api/current_user')
-        .reply(200, function (uri, body) {
+        .reply(200, function () {
             assert.ok(
                 this.req.headers.authorization.indexOf('Bearer token') > -1,
                 'Authorization header should be "Bearer token"'
@@ -63,7 +63,7 @@ test('patreon', (assert) => {
         .replyWithError('Oh geeze')
 
     client('/current_user')
-        .then((result) => {
+        .then(() => {
             assert.fail('promise passed unexpectedly!')
         })
         .catch((err) => {

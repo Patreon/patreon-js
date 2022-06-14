@@ -9,10 +9,11 @@
   "author": "Patreon",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.2",
+    "express": "^4.18.1",
     "patreon": "0.4.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0"
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.5"
   }
 }
