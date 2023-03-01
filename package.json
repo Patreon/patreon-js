@@ -46,7 +46,7 @@
     "express": "^4.16.2",
     "json-markup": "^1.1.0",
     "nock": "^9.0.24",
-    "tap-junit": "^1.2.8",
+    "tap-junit": "^5.0.2",
     "tape": "^4.8.0"
   }
 }
