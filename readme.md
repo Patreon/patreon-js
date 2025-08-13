@@ -9,7 +9,7 @@ Use the Patreon API via OAuth.
 
 You'll need to register an OAuth client account to receive a `client_id`, `client_secret` and other info for use with this module.
 
-Visit the [OAuth Documentation Page](https://www.patreon.com/oauth2/documentation) **while logged in as a Patreon creator on patreon.com** to register your client.
+Visit the [OAuth Documentation Page](https://docs.patreon.com/#oauth) **while logged in as a Patreon creator on patreon.com** to register your client.
 
 
 ## Installation
