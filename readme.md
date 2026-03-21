@@ -1,5 +1,12 @@
 # patreon-js
 
+> [!CAUTION]
+> This package is deprecated. It uses Patreon API v1, which is deprecated and no longer maintained. This SDK will not receive further updates.
+>
+> We recommend migrating to the Patreon API v2 by integrating directly using your own HTTP client. See the [API documentation](https://docs.patreon.com) and [v1 to v2 migration overview](https://docs.patreon.com/#migrating-from-api-v1-to-api-v2) for details.
+
+---
+
 [![Build State](https://img.shields.io/circleci/project/Patreon/patreon-js.svg?style=flat)](https://circleci.com/gh/Patreon/patreon-js)
 
 Use the Patreon API via OAuth.
