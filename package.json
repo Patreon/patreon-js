@@ -2,17 +2,13 @@
   "name": "patreon",
   "version": "0.4.1",
   "description": "Use the Patreon API via OAuth.",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "node_modules/.bin/babel src -d dist",
     "examples": "npm run build && babel-node examples/server.js",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint": "eslint src/",
     "test": "babel-tape-runner tests/**/*.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/patreon/patreon-js.git"
   },
   "keywords": [
     "patreon"
@@ -30,7 +26,8 @@
     "form-urlencoded": "^2.0.4",
     "is-plain-object": "^2.0.4",
     "isomorphic-fetch": "^2.2.1",
-    "jsonapi-datastore": "^0.4.0-beta"
+    "jsonapi-datastore": "^0.4.0-beta",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch'
+import fetch from 'node-fetch'
 import { JsonApiDataStore } from 'jsonapi-datastore'
 import { normalizeRequest, checkStatus, getJson, userAgentString } from './utils'
 
